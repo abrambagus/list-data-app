@@ -1,5 +1,6 @@
 "use client";
-import { getPaymentData } from "@/app/_api/api";
+
+import { getUsersData } from "@/app/_api/api";
 import {
   Box,
   CircularProgress,
@@ -13,33 +14,27 @@ import {
   Typography,
 } from "@mui/material";
 import { useQuery } from "react-query";
+import { useSelector } from "react-redux";
 
-const salesHeader = [
-  "id",
-  "name",
-  "sales_id",
-  "item_id",
-  "qty",
-  "consumen_nama",
-  "transaction_date",
-];
+export default function Users() {
+  const isOpen = useSelector((state) => state.sidebarReducer.isOpen);
 
-export default function Dashboard() {
-  const { data, isLoading } = useQuery(["list-payment-data"], () =>
-    getPaymentData()
+  const { data, isLoading } = useQuery(["list-users-data"], () =>
+    getUsersData()
   );
 
-  const paymentData = data?.data || [];
+  const usersData = data?.data || [];
+  const usersColumn = (usersData.length > 0 && Object.keys(usersData[0])) || [];
 
   return (
     <div>
       <Box sx={{ borderBottom: "1px solid" }}>
         <Box sx={{ padding: 1 }}>
           <Typography variant="h4" fontWeight={600}>
-            Sales Dashboard
+            Users Data
           </Typography>
           <Typography fontSize={"15px"} color={"blue"}>
-            List of Sales Data
+            List of Users Data
           </Typography>
         </Box>
       </Box>
@@ -48,13 +43,15 @@ export default function Dashboard() {
           component={Paper}
           sx={{
             maxHeight: "calc(100vh - 140px)",
+            maxWidth: isOpen ? "calc(100vw - 225px)" : "calc(100vw - 100px)",
             overflow: "auto",
+            transition: `max-width ${isOpen ? "0.4s" : "0.1s"}  linear`,
           }}
         >
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                {salesHeader.map((item) => (
+                {usersColumn.map((item) => (
                   <TableCell sx={{ padding: 1 }} align="center" key={item}>
                     <Typography fontSize={"15px"} align="center">
                       {item}
@@ -66,15 +63,19 @@ export default function Dashboard() {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={7}>
+                  <TableCell colSpan={usersColumn.length}>
                     <Box mt={3} mb={3} display={"flex"} justifyContent="center">
                       <CircularProgress />
                     </Box>
                   </TableCell>
                 </TableRow>
               ) : (
-                paymentData.map((payment, index) => (
-                  <RenderTablePayment key={index} data={payment} />
+                usersData.map((payment, index) => (
+                  <TableRow key={index}>
+                    {usersColumn.map((column) => (
+                      <TableCell key={column}>{payment[column]}</TableCell>
+                    ))}
+                  </TableRow>
                 ))
               )}
             </TableBody>
@@ -84,31 +85,3 @@ export default function Dashboard() {
     </div>
   );
 }
-
-const RenderTablePayment = ({ data }) => {
-  return (
-    <TableRow>
-      <TableCell>
-        <Typography>{data.id}</Typography>
-      </TableCell>
-      <TableCell>
-        <Typography>{data.name}</Typography>
-      </TableCell>
-      <TableCell>
-        <Typography>{data.sales_id}</Typography>
-      </TableCell>
-      <TableCell>
-        <Typography>{data.item_id}</Typography>
-      </TableCell>
-      <TableCell>
-        <Typography>{data.qty}</Typography>
-      </TableCell>
-      <TableCell>
-        <Typography>{data.consumen_name}</Typography>
-      </TableCell>
-      <TableCell>
-        <Typography>{data.transaction_date}</Typography>
-      </TableCell>
-    </TableRow>
-  );
-};

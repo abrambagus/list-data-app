@@ -1,0 +1,15 @@
+{
+"editor.formatOnSave": true,
+"editor.tabSize": 2,
+"editor.wordWrap": "wordWrapColumn",
+"editor.wordWrapColumn": 100,
+"javascript.updateImportsOnFileMove.enabled": "always",
+"editor.codeActionsOnSave": {
+  "source.organizeImports": true
+},
+"diffEditor.ignoreTrimWhitespace": false,
+"[javascript]": {
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
+},
+"prettier.singleQuote": false
+}
