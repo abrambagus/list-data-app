@@ -104,7 +104,6 @@ export default function Registration() {
             }}
             defaultValue=""
             render={({ field, fieldState }) => {
-              console.log("field", field);
               return (
                 <TextField
                   placeholder={"Input email"}

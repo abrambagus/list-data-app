@@ -20,3 +20,13 @@ export const postUsersData = async (data) => {
   });
   return res;
 };
+
+export const deleteUser = async (id) => {
+  const res = await fetch(`https://delman-fe-api.fly.dev/users/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return res;
+};

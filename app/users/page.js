@@ -13,18 +13,42 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import { useMemo, useRef, useState } from "react";
 import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
 
 export default function Users() {
   const isOpen = useSelector((state) => state.sidebarReducer.isOpen);
-
+  const elementsRef = useRef([]);
+  const [isLineClampUsed, setIsLineClampUsed] = useState([]);
   const { data, isLoading } = useQuery(["list-users-data"], () =>
     getUsersData()
   );
 
-  const usersData = data?.data || [];
+  const usersData = useMemo(() => data?.data || [], [data]);
   const usersColumn = (usersData.length > 0 && Object.keys(usersData[0])) || [];
+
+  console.log(elementsRef);
+
+  // useEffect(() => {
+  //   const checkLineClamp = () => {
+  //     const updatedIsLineClampUsed = elementsRef.current.map((element) => {
+  //       if (element.scrollHeight > element.clientHeight) {
+  //         return true;
+  //       } else {
+  //         return false;
+  //       }
+  //     });
+
+  //     setIsLineClampUsed(updatedIsLineClampUsed);
+  //   };
+  //   checkLineClamp();
+  //   window.addEventListener("resize", checkLineClamp);
+
+  //   return () => {
+  //     window.removeEventListener("resize", checkLineClamp);
+  //   };
+  // }, [elementsRef]);
 
   return (
     <div>
@@ -52,10 +76,12 @@ export default function Users() {
             <TableHead>
               <TableRow>
                 {usersColumn.map((item) => (
-                  <TableCell sx={{ padding: 1 }} align="center" key={item}>
-                    <Typography fontSize={"15px"} align="center">
-                      {item}
-                    </Typography>
+                  <TableCell
+                    sx={{ padding: 1, maxWidth: "250px" }}
+                    align="center"
+                    key={item}
+                  >
+                    <Typography fontSize={"15px"}>{item}</Typography>
                   </TableCell>
                 ))}
               </TableRow>
@@ -70,10 +96,36 @@ export default function Users() {
                   </TableCell>
                 </TableRow>
               ) : (
-                usersData.map((payment, index) => (
-                  <TableRow key={index}>
-                    {usersColumn.map((column) => (
-                      <TableCell key={column}>{payment[column]}</TableCell>
+                usersData.map((payment, indexUser) => (
+                  <TableRow key={indexUser}>
+                    {usersColumn.map((column, indexCol) => (
+                      <TableCell key={"col-" + indexUser + indexCol}>
+                        <Box
+                          display={"flex"}
+                          overflow={"hidden"}
+                          position={"relative"}
+                          alignItems={"center"}
+                        >
+                          <Typography
+                            sx={{
+                              overflow: "hidden",
+                              display: "-webkit-box",
+                              WebkitBoxOrient: "vertical",
+                              WebkitLineClamp: 1,
+                            }}
+                            fontSize={"15px"}
+                          >
+                            {payment[column]}
+                          </Typography>
+                          {/* {isLineClampUsed[index] && (
+                            <Box>
+                              <IconButton>
+                                <NavigateNextIcon />
+                              </IconButton>
+                            </Box>
+                          )} */}
+                        </Box>
+                      </TableCell>
                     ))}
                   </TableRow>
                 ))

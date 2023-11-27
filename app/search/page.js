@@ -4,11 +4,7 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import {
   Box,
   Button,
-  Divider,
   InputAdornment,
-  List,
-  ListItem,
-  ListItemButton,
   SwipeableDrawer,
   TextField,
   Typography,
@@ -16,21 +12,28 @@ import {
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { getUsersData } from "../_api/api";
+import SidebarSearch from "../_components/SidebarSearch";
 
 export default function Search() {
+  const [openDrawer, setOpenDrawer] = useState(false);
   const [search, setSearch] = useState("");
-  const [result, setResult] = useState(null);
-  const { data } = useQuery(["list-users-data-search"], () => getUsersData());
+  const [user, setUser] = useState(null);
+  const { data, refetch } = useQuery(["list-users-data-search"], () =>
+    getUsersData()
+  );
   const usersData = data?.data || [];
 
   const handleSearch = (event) => {
-    console.log(search);
     if (event.key === "Enter") {
-      setResult(usersData.find((data) => data.email === search));
+      setUser(usersData.find((data) => data.email === search));
     }
   };
 
-  console.log("result", result);
+  const handleReset = () => {
+    setSearch("");
+    setUser(null);
+    refetch();
+  };
 
   return (
     <div>
@@ -44,7 +47,7 @@ export default function Search() {
           </Typography>
         </Box>
       </Box>
-      <Box marginTop={2} padding={2} width={"70%"}>
+      <Box marginTop={2} padding={2} width={"60%"}>
         <TextField
           placeholder={"Press enter to search user"}
           sx={{
@@ -63,7 +66,7 @@ export default function Search() {
             ),
           }}
         />
-        {result && (
+        {user && (
           <Box
             width={"100%"}
             border={"1px solid"}
@@ -73,17 +76,21 @@ export default function Search() {
           >
             <Box display={"flex"} justifyContent={"center"} marginBottom={1}>
               <Typography variant="h4" fontWeight={600}>
-                {result.name}
+                {user.name}
               </Typography>
             </Box>
             <Box display={"flex"} justifyContent={"center"} marginBottom={1}>
-              <Typography fontSize={"15px"} fontWeight={100} color={"gray"}>
-                {result.email}
+              <Typography fontSize={"15px"} color={"gray"}>
+                {user.email}
               </Typography>
             </Box>
             <Box border={"1px solid grey"} marginX={30} marginBottom={1} />
             <Box display={"flex"} justifyContent={"center"} marginBottom={1}>
-              <Button variant="contained" type="submit">
+              <Button
+                variant="contained"
+                type="submit"
+                onClick={() => setOpenDrawer(true)}
+              >
                 View User Profile
               </Button>
             </Box>
@@ -92,21 +99,15 @@ export default function Search() {
       </Box>
       <SwipeableDrawer
         anchor={"right"}
-        open={false}
-        onClose={null}
-        onOpen={null}
+        open={openDrawer}
+        onClose={() => setOpenDrawer(true)}
+        onOpen={() => setOpenDrawer(false)}
       >
-        <Box sx={{ width: 250 }} role="presentation">
-          <List>
-            {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton></ListItemButton>
-              </ListItem>
-            ))}
-          </List>
-          <Divider />
-          <List></List>
-        </Box>
+        <SidebarSearch
+          user={user}
+          handleCloseSidebar={() => setOpenDrawer(false)}
+          handleReset={handleReset}
+        />
       </SwipeableDrawer>
     </div>
   );

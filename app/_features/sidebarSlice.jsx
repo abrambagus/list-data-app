@@ -1,18 +1,24 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 export const sidebarSlice = createSlice({
-  name: 'sidebar',
+  name: "sidebar",
   initialState: {
-    isOpen: true,
+    isOpen:
+      localStorage.getItem("isOpen") !== null
+        ? localStorage.getItem("isOpen")
+        : "true",
   },
   reducers: {
     setOpenDrawer: (state) => {
-      state.isOpen = !state.isOpen
-    }
+      state.isOpen === "true"
+        ? (state.isOpen = "false")
+        : (state.isOpen = "true");
+      localStorage.setItem("isOpen", state.isOpen);
+    },
   },
-})
+});
 
 // Action creators are generated for each case reducer function
-export const { setOpenDrawer } = sidebarSlice.actions
+export const { setOpenDrawer } = sidebarSlice.actions;
 
-export default sidebarSlice.reducer
+export default sidebarSlice.reducer;

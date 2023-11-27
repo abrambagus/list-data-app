@@ -47,36 +47,34 @@ const Sidebar = () => {
   };
 
   return (
-    <div>
-      <StyledDrawer variant="permanent" anchor="left" open={isOpen}>
-        <List>
-          <ListItemButton onClick={handleOpenSidebar}>
-            <ListItemIcon>
-              <MenuRoundedIcon />
-            </ListItemIcon>
-            <ListItemText>
-              <Typography>Menu</Typography>
-            </ListItemText>
-          </ListItemButton>
-          {listSidebar.map((item, index) => {
-            return (
-              <ListItemButton key={index} onClick={() => router.push(item.url)}>
-                <ListItemIcon>
-                  {React.cloneElement(item.icon, {
-                    sx: { color: isActive(item) ? "blue" : "black" },
-                  })}
-                </ListItemIcon>
-                <ListItemText>
-                  <Typography color={isActive(item) ? "blue" : "black"}>
-                    {item.label}
-                  </Typography>
-                </ListItemText>
-              </ListItemButton>
-            );
-          })}
-        </List>
-      </StyledDrawer>
-    </div>
+    <StyledDrawer variant="permanent" anchor="left" open={isOpen === "true"}>
+      <List>
+        <ListItemButton onClick={handleOpenSidebar}>
+          <ListItemIcon>
+            <MenuRoundedIcon />
+          </ListItemIcon>
+          <ListItemText>
+            <Typography>Menu</Typography>
+          </ListItemText>
+        </ListItemButton>
+        {listSidebar.map((item, index) => {
+          return (
+            <ListItemButton key={index} onClick={() => router.push(item.url)}>
+              <ListItemIcon>
+                {React.cloneElement(item.icon, {
+                  sx: { color: isActive(item) ? "blue" : "black" },
+                })}
+              </ListItemIcon>
+              <ListItemText>
+                <Typography color={isActive(item) ? "blue" : "black"}>
+                  {item.label}
+                </Typography>
+              </ListItemText>
+            </ListItemButton>
+          );
+        })}
+      </List>
+    </StyledDrawer>
   );
 };
 
