@@ -15,9 +15,7 @@ import {
   styled,
 } from "@mui/material";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setDefaultValue, setOpenDrawer } from "../_features/sidebarSlice";
+import React, { useEffect, useState } from "react";
 
 const listSidebar = [
   { label: "Dashboard", url: "/", icon: <DashboardIcon /> },
@@ -35,20 +33,25 @@ const drawerWidth = 190;
 const Sidebar = () => {
   const pathName = usePathname();
   const router = useRouter();
-  const isOpen = useSelector((state) => state.sidebarReducer.isOpen);
-  const dispatch = useDispatch();
+  const [isOpen, setIsOpen] = useState("true");
 
   const isActive = (item) => {
     return pathName === item.url;
   };
 
   const handleOpenSidebar = () => {
-    dispatch(setOpenDrawer());
+    setIsOpen((prev) => {
+      const newValue = prev === "true" ? "false" : "true";
+      localStorage.setItem("isOpen", newValue);
+      return newValue;
+    });
   };
 
   useEffect(() => {
-    dispatch(setDefaultValue(localStorage.getItem("isOpen")));
-  }, [dispatch]);
+    if (localStorage.getItem("isOpen")) {
+      setIsOpen(localStorage.getItem("isOpen"));
+    }
+  }, []);
 
   return (
     <StyledDrawer variant="permanent" anchor="left" open={isOpen === "true"}>

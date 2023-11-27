@@ -18,11 +18,8 @@ import {
 } from "@mui/material";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "react-query";
-import { useSelector } from "react-redux";
 
 export default function Users() {
-  const isOpen = useSelector((state) => state.sidebarReducer.isOpen);
-
   const { data, isLoading } = useQuery(["list-users-data"], () =>
     getUsersData()
   );
@@ -47,9 +44,7 @@ export default function Users() {
           component={Paper}
           sx={{
             maxHeight: "calc(100vh - 140px)",
-            maxWidth: isOpen ? "calc(100vw - 225px)" : "calc(100vw - 100px)",
             overflow: "auto",
-            transition: `max-width ${isOpen ? "0.4s" : "0.1s"}  linear`,
           }}
         >
           <Table stickyHeader>
