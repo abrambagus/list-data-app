@@ -13,7 +13,7 @@ export const sidebarSlice = createSlice({
       state.isOpen === "true"
         ? (state.isOpen = "false")
         : (state.isOpen = "true");
-      localStorage.setItem("isOpen", state.isOpen);
+      localStorage?.setItem("isOpen", state.isOpen);
     },
   },
 });

@@ -1,8 +1,10 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "react-query";
+import { Provider } from "react-redux";
+import store from "../_store/store";
 
-export default function ReactQueryProvider({ children }) {
+export default function Providers({ children }) {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -13,6 +15,8 @@ export default function ReactQueryProvider({ children }) {
   });
 
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    </Provider>
   );
 }

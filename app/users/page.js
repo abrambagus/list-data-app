@@ -1,10 +1,13 @@
 "use client";
 
 import { getUsersData } from "@/app/_api/api";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import {
   Box,
   CircularProgress,
+  IconButton,
   Paper,
+  Popover,
   Table,
   TableBody,
   TableCell,
@@ -13,42 +16,19 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
 
 export default function Users() {
   const isOpen = useSelector((state) => state.sidebarReducer.isOpen);
-  const elementsRef = useRef([]);
-  const [isLineClampUsed, setIsLineClampUsed] = useState([]);
+
   const { data, isLoading } = useQuery(["list-users-data"], () =>
     getUsersData()
   );
 
   const usersData = useMemo(() => data?.data || [], [data]);
   const usersColumn = (usersData.length > 0 && Object.keys(usersData[0])) || [];
-
-  console.log(elementsRef);
-
-  // useEffect(() => {
-  //   const checkLineClamp = () => {
-  //     const updatedIsLineClampUsed = elementsRef.current.map((element) => {
-  //       if (element.scrollHeight > element.clientHeight) {
-  //         return true;
-  //       } else {
-  //         return false;
-  //       }
-  //     });
-
-  //     setIsLineClampUsed(updatedIsLineClampUsed);
-  //   };
-  //   checkLineClamp();
-  //   window.addEventListener("resize", checkLineClamp);
-
-  //   return () => {
-  //     window.removeEventListener("resize", checkLineClamp);
-  //   };
-  // }, [elementsRef]);
 
   return (
     <div>
@@ -96,38 +76,12 @@ export default function Users() {
                   </TableCell>
                 </TableRow>
               ) : (
-                usersData.map((payment, indexUser) => (
-                  <TableRow key={indexUser}>
-                    {usersColumn.map((column, indexCol) => (
-                      <TableCell key={"col-" + indexUser + indexCol}>
-                        <Box
-                          display={"flex"}
-                          overflow={"hidden"}
-                          position={"relative"}
-                          alignItems={"center"}
-                        >
-                          <Typography
-                            sx={{
-                              overflow: "hidden",
-                              display: "-webkit-box",
-                              WebkitBoxOrient: "vertical",
-                              WebkitLineClamp: 1,
-                            }}
-                            fontSize={"15px"}
-                          >
-                            {payment[column]}
-                          </Typography>
-                          {/* {isLineClampUsed[index] && (
-                            <Box>
-                              <IconButton>
-                                <NavigateNextIcon />
-                              </IconButton>
-                            </Box>
-                          )} */}
-                        </Box>
-                      </TableCell>
-                    ))}
-                  </TableRow>
+                usersData.map((user, index) => (
+                  <UserRowTable
+                    key={index}
+                    user={user}
+                    usersColumn={usersColumn}
+                  />
                 ))
               )}
             </TableBody>
@@ -137,3 +91,87 @@ export default function Users() {
     </div>
   );
 }
+
+const UserRowTable = ({ user, usersColumn }) => {
+  const elementsRef = useRef([]);
+  const [anchorEl, setAnchorEl] = useState([]);
+  const [isLineClamp, setIsLineClamp] = useState([]);
+
+  const handleClick = (event, index) => {
+    const newArray = [...anchorEl];
+    newArray[index] = event.currentTarget;
+    setAnchorEl(newArray);
+  };
+
+  const handleClose = (index) => {
+    const result = anchorEl.filter((anchor, index) => index !== index);
+    setAnchorEl(result);
+  };
+
+  useEffect(() => {
+    const checkLineClamp = () => {
+      const updatedIsLineClamp = elementsRef.current.map((element) => {
+        if (element.scrollHeight > element.clientHeight) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+
+      setIsLineClamp(updatedIsLineClamp);
+    };
+    checkLineClamp();
+    window.addEventListener("resize", checkLineClamp);
+
+    return () => {
+      window.removeEventListener("resize", checkLineClamp);
+    };
+  }, [elementsRef]);
+
+  return (
+    <TableRow>
+      {usersColumn.map((column, index) => (
+        <TableCell key={"col-" + index}>
+          <Box
+            display={"flex"}
+            overflow={"hidden"}
+            position={"relative"}
+            alignItems={"center"}
+          >
+            <Typography
+              ref={(el) => (elementsRef.current[index] = el)}
+              sx={{
+                overflow: "hidden",
+                display: "-webkit-box",
+                WebkitBoxOrient: "vertical",
+                WebkitLineClamp: 1,
+              }}
+              fontSize={"15px"}
+            >
+              {user[column]}
+            </Typography>
+            {isLineClamp[index] && (
+              <Box>
+                <IconButton onClick={(event) => handleClick(event, index)}>
+                  <NavigateNextIcon />
+                </IconButton>
+                <Popover
+                  id={Boolean(anchorEl[index]) ? "popover" : undefined}
+                  open={Boolean(anchorEl[index])}
+                  anchorEl={anchorEl[index]}
+                  onClose={() => handleClose(index)}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                >
+                  <Typography sx={{ p: 2 }}>{user[column]}</Typography>
+                </Popover>
+              </Box>
+            )}
+          </Box>
+        </TableCell>
+      ))}
+    </TableRow>
+  );
+};

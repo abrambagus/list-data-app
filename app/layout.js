@@ -1,6 +1,6 @@
 import { Sidebar } from "@/app/_components";
 import { Box } from "@mui/material";
-import { ReactQueryProvider, ReduxProvider } from "./_providers";
+import { Providers } from "./_providers";
 import "./globals.css";
 
 export const metadata = {
@@ -12,21 +12,19 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body style={{ margin: 0 }}>
-        <ReduxProvider>
-          <ReactQueryProvider>
-            <Box display={"flex"}>
-              <Sidebar />
-              <Box
-                sx={{
-                  flexGrow: 1,
-                  overflow: "hidden",
-                }}
-              >
-                {children}
-              </Box>
+        <Providers>
+          <Box display={"flex"}>
+            <Sidebar />
+            <Box
+              sx={{
+                flexGrow: 1,
+                overflow: "hidden",
+              }}
+            >
+              {children}
             </Box>
-          </ReactQueryProvider>
-        </ReduxProvider>
+          </Box>
+        </Providers>
       </body>
     </html>
   );

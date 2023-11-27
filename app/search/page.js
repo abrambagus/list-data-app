@@ -12,7 +12,7 @@ import {
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { getUsersData } from "../_api/api";
-import SidebarSearch from "../_components/SidebarSearch";
+import { SidebarSearch } from "../_components";
 
 export default function Search() {
   const [openDrawer, setOpenDrawer] = useState(false);

@@ -1,4 +1,3 @@
-import ReactQueryProvider from "./reactQueryProvider";
-import ReduxProvider from "./reduxProvider";
+import Providers from "./Providers";
 
-export { ReactQueryProvider, ReduxProvider };
+export { Providers };
