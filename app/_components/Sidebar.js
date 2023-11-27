@@ -15,9 +15,9 @@ import {
   styled,
 } from "@mui/material";
 import { usePathname, useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setOpenDrawer } from "../_features/sidebarSlice";
+import { setDefaultValue, setOpenDrawer } from "../_features/sidebarSlice";
 
 const listSidebar = [
   { label: "Dashboard", url: "/", icon: <DashboardIcon /> },
@@ -45,6 +45,10 @@ const Sidebar = () => {
   const handleOpenSidebar = () => {
     dispatch(setOpenDrawer());
   };
+
+  useEffect(() => {
+    dispatch(setDefaultValue(localStorage.getItem("isOpen")));
+  }, [dispatch]);
 
   return (
     <StyledDrawer variant="permanent" anchor="left" open={isOpen === "true"}>
@@ -99,9 +103,7 @@ const closedMixin = (theme) => ({
   },
 });
 
-const StyledDrawer = styled(Drawer, {
-  shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
+const StyledDrawer = styled(Drawer)(({ theme, open }) => ({
   width: drawerWidth,
   flexShrink: 0,
   whiteSpace: "nowrap",
